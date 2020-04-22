@@ -160,7 +160,6 @@ double Tprob(int iter, long sum, long sum2) {
 long hillClimber(long A[], int max_iter) {
     srand(time(NULL));
     long low = randSol(A, false);
-    // printf("starting: %ld\n", low);
     long low2 = low;
     int a, b;
     for (int i = 0; i < max_iter; i++) {
