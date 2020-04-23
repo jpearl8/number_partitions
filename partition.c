@@ -27,6 +27,7 @@ long sum (long A[]);
 
 int size = 100;
 int sArray = 98;
+int max_iteration_val = 250000;
 
 int main(int argc, char** argv) {
     srand(time(NULL));
@@ -38,7 +39,7 @@ int main(int argc, char** argv) {
     int alg = atoi(argv[2]);
     if (flag == 1 || flag == 2){
         //testing mode, rewrite input file
-        for (int ttt = 0; ttt < 60; ttt++){ 
+        for (int ttt = 0; ttt < 10; ttt++){ 
             // rewrite input file
             FILE *fptr;
             fptr = fopen("test.txt", "w");
@@ -118,44 +119,44 @@ int main(int argc, char** argv) {
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 start = clock();
-                repeatedRandom(A_2, 250000);
+                repeatedRandom(A_2, max_iteration_val);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 start = clock();
-                hillClimber(A_3, 250000);
+                hillClimber(A_3, max_iteration_val);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 start = clock();
-                simAnneal(A_4, 250000);
+                simAnneal(A_4, max_iteration_val);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 start = clock();
-                repeatedRandomPartKarp(A_5, 250000);
+                repeatedRandomPartKarp(A_5, max_iteration_val);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 start = clock();
-                hillClimberPartKarp(A_6, 250000);
+                hillClimberPartKarp(A_6, max_iteration_val);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 start = clock();
-                simAnnealPartKarp(A_7, 250000);
+                simAnnealPartKarp(A_7, max_iteration_val);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
                 printf("NEW\n");
             } else {
                 printf("%ld \n", karp(A_1, sA, true));
-                printf("%ld \n", repeatedRandom(A_2, 250000)); 
-                printf("%ld \n", hillClimber(A_3, 250000));
-                printf("%ld \n", simAnneal(A_4, 250000));
-                printf("%ld \n", repeatedRandomPartKarp(A_5, 250000)); 
-                printf("%ld \n", hillClimberPartKarp(A_6, 250000));
-                printf("%ld \n", simAnnealPartKarp(A_7, 250000));
+                printf("%ld \n", repeatedRandom(A_2, max_iteration_val)); 
+                printf("%ld \n", hillClimber(A_3, max_iteration_val));
+                printf("%ld \n", simAnneal(A_4, max_iteration_val));
+                printf("%ld \n", repeatedRandomPartKarp(A_5, max_iteration_val)); 
+                printf("%ld \n", hillClimberPartKarp(A_6, max_iteration_val));
+                printf("%ld \n", simAnnealPartKarp(A_7, max_iteration_val));
                 printf("NEW\n");
             }
 
@@ -203,27 +204,27 @@ int main(int argc, char** argv) {
                 break; 
                 
             case 1:
-                printf("%ld \n", repeatedRandom(A, 25000)); 
+                printf("%ld \n", repeatedRandom(A, max_iteration_val)); 
                 break; 
             
             case 2:
-                printf("%ld \n", hillClimber(A, 25000));
+                printf("%ld \n", hillClimber(A, max_iteration_val));
                 break; 
                 
             case 3:
-                printf("%ld \n", simAnneal(A, 25000));
+                printf("%ld \n", simAnneal(A, max_iteration_val));
                 break; 
             
             case 11:
-                printf("%ld \n", repeatedRandomPartKarp(A, 25000));
+                printf("%ld \n", repeatedRandomPartKarp(A, max_iteration_val));
                 break;
 
             case 12:
-                printf("%ld \n", hillClimberPartKarp(A, 25000));
+                printf("%ld \n", hillClimberPartKarp(A, max_iteration_val));
                 break;
 
             case 13:
-                printf("%ld \n", simAnnealPartKarp(A, 25000));
+                printf("%ld \n", simAnnealPartKarp(A, max_iteration_val));
                 break;
             
             /* you can have any number of case statements */
