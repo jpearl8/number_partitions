@@ -19,8 +19,11 @@ Testing mode rewrites test.txt and fills it with randomly generated numbers.<br/
 In testing mode, use test.txt as the input file.<br/>
 **Flag 1** Prints redisual results<br/>
 **Flag 2** Prints time results<br/>
-Results from testing available gdoc:
+Results from testing available gsheets:
 https://docs.google.com/spreadsheets/d/1GSNGNi3w-h-WoM0mPtApfjqQwkluPZKpQMXI9Qqdm7Q/edit?usp=sharing
+
+Writeup is available on gdoc:
+https://docs.google.com/document/d/1NUtTOJ7fCz5LRGdeQd5ua5v1dQ27tcgC7t5p0H8-2XI/edit?usp=sharing
 
 Recommended usage is to pipe (>) to output.txt<br/>
 For testing mode, recommended parameter inputs are:<br/>
