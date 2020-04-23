@@ -36,9 +36,9 @@ int main(int argc, char** argv) {
     }
     int flag = atoi(argv[1]);
     int alg = atoi(argv[2]);
-    if (flag == 1){
+    if (flag == 1 || flag == 2){
         //testing mode, rewrite input file
-        for (int ttt = 0; ttt < 10; ttt++){ 
+        for (int ttt = 0; ttt < 60; ttt++){ 
             // rewrite input file
             FILE *fptr;
             fptr = fopen("test.txt", "w");
@@ -108,14 +108,57 @@ int main(int argc, char** argv) {
             memcpy(A_5, A, sizeof(A));
             memcpy(A_6, A, sizeof(A));
             memcpy(A_7, A, sizeof(A));
-            printf("%ld \n", karp(A_1, sA, true));
-            printf("%ld \n", repeatedRandom(A_2, 25000)); 
-            printf("%ld \n", hillClimber(A_3, 25000));
-            printf("%ld \n", simAnneal(A_4, 25000));
-            printf("%ld \n", repeatedRandomPartKarp(A_5, 25000)); 
-            printf("%ld \n", hillClimberPartKarp(A_6, 25000));
-            printf("%ld \n", simAnnealPartKarp(A_7, 25000));
-            printf("NEW\n");
+            
+            if (flag == 2){
+                clock_t start, end;
+                double cpu_time_used;
+                start = clock();
+                karp(A_1, sA, true);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                start = clock();
+                repeatedRandom(A_2, 250000);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                start = clock();
+                hillClimber(A_3, 250000);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                start = clock();
+                simAnneal(A_4, 250000);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                start = clock();
+                repeatedRandomPartKarp(A_5, 250000);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                start = clock();
+                hillClimberPartKarp(A_6, 250000);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                start = clock();
+                simAnnealPartKarp(A_7, 250000);
+                end = clock();
+                cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+                printf("%f \n", cpu_time_used);
+                printf("NEW\n");
+            } else {
+                printf("%ld \n", karp(A_1, sA, true));
+                printf("%ld \n", repeatedRandom(A_2, 250000)); 
+                printf("%ld \n", hillClimber(A_3, 250000));
+                printf("%ld \n", simAnneal(A_4, 250000));
+                printf("%ld \n", repeatedRandomPartKarp(A_5, 250000)); 
+                printf("%ld \n", hillClimberPartKarp(A_6, 250000));
+                printf("%ld \n", simAnnealPartKarp(A_7, 250000));
+                printf("NEW\n");
+            }
+
         }
     } else if (flag == 0){
         // read input file    
@@ -291,6 +334,7 @@ long hillClimberPartKarp(long A[], int max_iter) {
                 memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
                 low = low2;
             } else {
+                low2 = low;
                 memcpy(A_post_2, A_post, sizeof(A_post));
                 memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
             }
