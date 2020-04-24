@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
         // read input file    
         FILE *input_file;
         long A[size];
-        // long sA[(size - 1)];
+        long sA[(size - 1)];
         input_file = fopen(argv[3], "r");
         if (input_file == 0)
         {
@@ -209,8 +209,8 @@ int main(int argc, char** argv) {
         switch(alg) {
 
             case 0:
-                printf("%ld \n", karp2(A, 100));
-                // printf("%ld \n", karp(A, sA, true));
+                // printf("%ld \n", karp2(A, 100));
+                printf("%ld \n", karp(A, sA, true));
                 break; 
                 
             case 1:
