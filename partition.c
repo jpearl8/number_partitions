@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
         // read input file    
         FILE *input_file;
         long A[size];
-        long sA[(size - 1)];
+        // long sA[(size - 1)];
         input_file = fopen(argv[3], "r");
         if (input_file == 0)
         {
@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
         }
         else
         {
-            int counter = 0;
+            // int counter = 0;
             char buf[20];
             int i = 0; 
             while (fgets(buf, sizeof buf, input_file)) {
