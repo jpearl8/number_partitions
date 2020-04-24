@@ -209,8 +209,8 @@ int main(int argc, char** argv) {
         switch(alg) {
 
             case 0:
-                printf("%ld \n", karp2(A, 100));
-                // printf("%ld \n", karp(A, sA, true));
+                // printf("%ld \n", karp2(A, 100));
+                printf("%ld \n", karp(A, sA, true));
                 break; 
                 
             case 1:
