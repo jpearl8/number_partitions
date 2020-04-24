@@ -214,7 +214,8 @@ int main(int argc, char** argv) {
                 break; 
                 
             case 1:
-                // printf("%ld \n", repeatedRandom(A, max_iteration_val)); 
+                printf("BREAKING");
+                printf("%ld \n", repeatedRandom(A, max_iteration_val)); 
                 break; 
             
             case 2:
