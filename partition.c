@@ -209,12 +209,12 @@ int main(int argc, char** argv) {
         switch(alg) {
 
             case 0:
-                // printf("%ld \n", karp2(A, 100));
-                printf("%ld \n", karp(A, sA, true));
+                printf("%ld \n", karp2(A, 100));
+                // printf("%ld \n", karp(A, sA, true));
                 break; 
                 
             case 1:
-                printf("%ld \n", repeatedRandom(A, max_iteration_val)); 
+                // printf("%ld \n", repeatedRandom(A, max_iteration_val)); 
                 break; 
             
             case 2:
