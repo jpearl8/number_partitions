@@ -152,13 +152,13 @@ int main(int argc, char** argv) {
                 printf("NEW\n");
             } else {
                 printf("%ld \n", karp2(A_1, 100));
-                // printf("%ld \n", karp(A_2, sA, false));
-                printf("%ld \n", repeatedRandom(A_2, max_iteration_val)); 
-                printf("%ld \n", hillClimber(A_3, max_iteration_val));
-                printf("%ld \n", simAnneal(A_4, max_iteration_val));
-                printf("%ld \n", repeatedRandomPartKarp(A_5, max_iteration_val)); 
-                printf("%ld \n", hillClimberPartKarp(A_6, max_iteration_val));
-                printf("%ld \n", simAnnealPartKarp(A_7, max_iteration_val));
+                printf("%ld \n", karp(A_2, sA, false));
+                // printf("%ld \n", repeatedRandom(A_2, max_iteration_val)); 
+                // printf("%ld \n", hillClimber(A_3, max_iteration_val));
+                // printf("%ld \n", simAnneal(A_4, max_iteration_val));
+                // printf("%ld \n", repeatedRandomPartKarp(A_5, max_iteration_val)); 
+                // printf("%ld \n", hillClimberPartKarp(A_6, max_iteration_val));
+                // printf("%ld \n", simAnnealPartKarp(A_7, max_iteration_val));
                 printf("NEW\n");
             }
 
@@ -197,6 +197,13 @@ int main(int argc, char** argv) {
             }
         }
         fclose(input_file);
+        // for (int j = 0; j < size; j++) {
+        //     if (j % 10 == 0){
+        //         printf("\n");
+        //     }
+        //     printf("%ld", A[j]);
+        // }
+        // printf("\n \n");
         // Sort A
         mergeSort(A, 0, (size - 1));
         switch(alg) {
@@ -701,7 +708,15 @@ long karp2(long arr[], int n) {
     if (n % 2 != 0){
         sArr[insert] = arr[n - 1];
     } 
+
     mergeSort(sArr, 0, (int)(ceil(n/2)) - 1);
+    // for (int j = 0; j < (int)(ceil(n/2)); j++) {
+    //     if (j % 10 == 0){
+    //         printf("\n");
+    //     }
+    //     printf("%ld ", sArr[j]);
+    // }
+    // printf("\n \n");
     return karp2(sArr, (int)(ceil(n/2)));
 }
     
