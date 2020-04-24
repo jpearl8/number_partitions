@@ -10,6 +10,7 @@ long flip();
 long hillClimber(long A[], int max_iter);
 long hillClimberPartKarp(long A[], int max_iter);
 long karp(long arr[], long sArr[], bool p);
+long karp2(long arr[], int n);
 void merge(long arr[], int l, int m, int r);
 void mergeSort(long arr[], int l, int r);
 long min (long A, long B);
@@ -39,7 +40,7 @@ int main(int argc, char** argv) {
     int alg = atoi(argv[2]);
     if (flag == 1 || flag == 2){
         //testing mode, rewrite input file
-        for (int ttt = 0; ttt < 10; ttt++){ 
+        for (int ttt = 0; ttt < 2; ttt++){ 
             // rewrite input file
             FILE *fptr;
             fptr = fopen("test.txt", "w");
@@ -66,7 +67,7 @@ int main(int argc, char** argv) {
             }
             else
             {
-                int counter = 0;
+                // int counter = 0;
                 char buf[20];
                 int i = 0; 
                 while (fgets(buf, sizeof buf, input_file)) {
@@ -114,7 +115,7 @@ int main(int argc, char** argv) {
                 clock_t start, end;
                 double cpu_time_used;
                 start = clock();
-                karp(A_1, sA, true);
+                karp2(A_1, 100);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
@@ -150,7 +151,8 @@ int main(int argc, char** argv) {
                 printf("%f \n", cpu_time_used);
                 printf("NEW\n");
             } else {
-                printf("%ld \n", karp(A_1, sA, true));
+                printf("%ld \n", karp2(A_1, 100));
+                // printf("%ld \n", karp(A_2, sA, false));
                 printf("%ld \n", repeatedRandom(A_2, max_iteration_val)); 
                 printf("%ld \n", hillClimber(A_3, max_iteration_val));
                 printf("%ld \n", simAnneal(A_4, max_iteration_val));
@@ -200,7 +202,8 @@ int main(int argc, char** argv) {
         switch(alg) {
 
             case 0:
-                printf("%ld \n", karp(A, sA, true));
+                printf("%ld \n", karp2(A, 100));
+                // printf("%ld \n", karp(A, sA, true));
                 break; 
                 
             case 1:
@@ -297,6 +300,59 @@ long simAnnealPartKarp(long A[], int max_iter) {
     return lowest;
 }
 
+long simAnnealPartKarp00(long A[], int max_iter) {
+    bool testing = false;
+    long A_post[size];
+    long A_post_2[size];
+    int A_p_dest[size];
+    int A_p_dest_2[size];
+    memset(A_post, 0, size * sizeof(long));
+    // Random Partition
+    randMemParts(A_p_dest, A, A_post);
+    memcpy(A_post_2, A_post, sizeof(A_post));
+    memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
+    long sA[(size - 1)];
+    memset(sA, 0, (size - 1) * sizeof(long));
+    // Running Random partition through Karmarker Karp
+    
+    long low = karp(A_post, sA, testing);
+    long lowest = low;
+    long low2 = low;
+    for (int i = 0; i < max_iter; i++) {
+        // If we've found a low of 0, stop looking
+        if (low != 0) {
+            // Get a random neighbor of solution & run karmarker karp
+            randNeighborParts(A_p_dest_2, A, A_post_2);
+            memset(sA, 0, (size - 1) * sizeof(long));
+            low2 = karp(A_post_2, sA, testing);
+            double j = ((double) rand() / (RAND_MAX));
+            double tprob = Tprob(i, labs(low), labs(low2));
+            // If we've found lower residue or we've rolled a heads from our Tprob function, pursue neighbor
+            if (low2 < low || j < tprob){
+                low = low2;
+                // copy A_post 2 into A post 1 and A dest 2 into A dest 1
+                memcpy(A_post, A_post_2, sizeof(A_post_2));
+                memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
+                
+            } else {
+                low2 = low;
+                // copy A_post 1 into A post 2 and A dest 1 into A dest 2
+                memcpy(A_post_2, A_post, sizeof(A_post));
+                memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
+            } 
+            // Record lowest residue we've encountered
+            if (low < lowest){
+                lowest = low;
+            }
+
+        } else {
+            break;
+        }
+    }
+    // printf("%ld\n", lowest);
+    // printf("Sim anneal: (part): %ld\n", lowest);
+    return lowest;
+}
 /*
 Hill Climber (PARTITIONED):
 Takes in parameters A and max iteration.
@@ -597,15 +653,21 @@ long karp(long arr[], long sArr[], bool p) {
     int insert = 0;
     // inserts difference between A's elements in subtraction array
     while (i < size) {
+            
             sArr[insert] = labs(arr[i] - arr[i + 1]);
+            // printf("%lu - %lu is %lu\n", arr[i], arr[i + 1], sArr[insert]);
+            // printf("i is %d and the difference is %lu and it's placed at index %d\n", i, sArr[insert], insert);
             insert++;
             i += 2;
     }
     // inserts difference between subtraction's elements into end of subtraction array
     while (si < 98) {
         sArr[insert] = labs(sArr[si] - sArr[si + 1]);
+        // printf("%lu - %lu is %lu\n", sArr[si], sArr[si + 1], sArr[insert]);
+        // printf("i is %d and the difference is %lu and it's placed at index %d\n", si, sArr[insert], insert);
         insert++;
         si += 2;
+
     }
     if (p) {
         // printf("%ld \n", sArr[98]);  
@@ -615,6 +677,35 @@ long karp(long arr[], long sArr[], bool p) {
 
 }
 
+/*Karmarker Karp
+Takes in sorted array A and empty array for subtraction
+Takes in boolean for print statement
+*/
+long karp2(long arr[], int n) {
+    if (n == 1){
+        return arr[0];
+    } else if (n == 2){
+        return labs(arr[0] - arr[1]);
+    }
+    long sArr[(int)(ceil(n/2))];
+    int i = 0;
+    int insert = 0;
+    while (i < n - 1) {
+        sArr[insert] = labs(arr[i] - arr[i + 1]);
+        // printf("%lu - %lu is %lu\n", arr[i], arr[i + 1], sArr[insert]);
+        // printf("i is %d and the difference is %lu and it's placed at index %d\n", i, sArr[insert], insert);
+        insert++;
+        i += 2;
+    }
+
+    if (n % 2 != 0){
+        sArr[insert] = arr[n - 1];
+    } 
+    mergeSort(sArr, 0, (int)(ceil(n/2)) - 1);
+    return karp2(sArr, (int)(ceil(n/2)));
+}
+    
+   
 /*
 Sums an entire array, returns solution
 */
