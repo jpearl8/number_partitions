@@ -6,11 +6,16 @@
 #include <stdbool.h>
 
 
+
+void buildHeap(long arr[], int n) ;
+long deleteRoot(long arr[], int n);
 long flip();
+void heapify(long arr[], int n, int i) ;
 long hillClimber(long A[], int max_iter);
 long hillClimberPartKarp(long A[], int max_iter);
 long karp(long arr[], long sArr[], bool p);
-long karp2(long arr[], int n);
+long karp3(long arr[], int n);
+long karp3_h(long arr[], int n);
 void merge(long arr[], int l, int m, int r);
 void mergeSort(long arr[], int l, int r);
 long min (long A, long B);
@@ -29,6 +34,7 @@ long sum (long A[]);
 int size = 100;
 int sArray = 98;
 int max_iteration_val = 250000;
+int max_iteration_val2 = 250000;
 
 int main(int argc, char** argv) {
     srand(time(NULL));
@@ -49,16 +55,17 @@ int main(int argc, char** argv) {
                 exit(1);
             }
             int a;
+            int b;
             for (int i = 0; i < 100; i++){
-                a = rand() % 100000;
-                fprintf(fptr, "%d\n", a);
+                a = rand() % 1000000000;
+                b = rand() % 100;
+                fprintf(fptr, "%d%d\n", b, a);
             }  
             fclose(fptr);
         
             // read input file    
             FILE *input_file;
             long A[size];
-            long sA[(size - 1)];
             input_file = fopen(argv[3], "r");
             if (input_file == 0)
             {
@@ -115,7 +122,7 @@ int main(int argc, char** argv) {
                 clock_t start, end;
                 double cpu_time_used;
                 start = clock();
-                karp2(A_1, 100);
+                karp3(A_1, 100);
                 end = clock();
                 cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
                 printf("%f \n", cpu_time_used);
@@ -151,14 +158,13 @@ int main(int argc, char** argv) {
                 printf("%f \n", cpu_time_used);
                 printf("NEW\n");
             } else {
-                printf("%ld \n", karp2(A_1, 100));
-                printf("%ld \n", karp(A_2, sA, false));
-                // printf("%ld \n", repeatedRandom(A_2, max_iteration_val)); 
-                // printf("%ld \n", hillClimber(A_3, max_iteration_val));
-                // printf("%ld \n", simAnneal(A_4, max_iteration_val));
-                // printf("%ld \n", repeatedRandomPartKarp(A_5, max_iteration_val)); 
-                // printf("%ld \n", hillClimberPartKarp(A_6, max_iteration_val));
-                // printf("%ld \n", simAnnealPartKarp(A_7, max_iteration_val));
+                printf("%ld \n", karp3(A_1, 100));
+                printf("%ld \n", repeatedRandom(A_2, max_iteration_val)); 
+                printf("%ld \n", hillClimber(A_3, max_iteration_val));
+                printf("%ld \n", simAnneal(A_4, max_iteration_val));
+                printf("%ld \n", repeatedRandomPartKarp(A_5, max_iteration_val)); 
+                printf("%ld \n", hillClimberPartKarp(A_6, max_iteration_val));
+                printf("%ld \n", simAnnealPartKarp(A_7, max_iteration_val));
                 printf("NEW\n");
             }
 
@@ -167,7 +173,6 @@ int main(int argc, char** argv) {
         // read input file    
         FILE *input_file;
         long A[size];
-        long sA[(size - 1)];
         input_file = fopen(argv[3], "r");
         if (input_file == 0)
         {
@@ -197,24 +202,15 @@ int main(int argc, char** argv) {
             }
         }
         fclose(input_file);
-        // for (int j = 0; j < size; j++) {
-        //     if (j % 10 == 0){
-        //         printf("\n");
-        //     }
-        //     printf("%ld", A[j]);
-        // }
-        // printf("\n \n");
         // Sort A
-        mergeSort(A, 0, (size - 1));
+        // mergeSort(A, 0, (size - 1));
         switch(alg) {
 
             case 0:
-                printf("%ld \n", karp2(A, 100));
-                // printf("%ld \n", karp(A, sA, true));
+                printf("%ld \n", karp3(A, 100));
                 break; 
                 
             case 1:
-                printf("BREAKING");
                 printf("%ld \n", repeatedRandom(A, max_iteration_val)); 
                 break; 
             
@@ -231,11 +227,11 @@ int main(int argc, char** argv) {
                 break;
 
             case 12:
-                printf("%ld \n", hillClimberPartKarp(A, max_iteration_val));
+                printf("%ld \n", hillClimberPartKarp(A, max_iteration_val2));
                 break;
 
             case 13:
-                printf("%ld \n", simAnnealPartKarp(A, max_iteration_val));
+                printf("%ld \n", simAnnealPartKarp(A, max_iteration_val2));
                 break;
             
             /* you can have any number of case statements */
@@ -256,111 +252,61 @@ Proceeds to check neighbor's neighbors if neighbor has lower residue OR or if we
 Returns the lowest residue it encounters
 */
 long simAnnealPartKarp(long A[], int max_iter) {
-    bool testing = false;
     long A_post[size];
     long A_post_2[size];
+    long A_post_temp[size];
+    // Destination array to hold specific partitions
     int A_p_dest[size];
     int A_p_dest_2[size];
+    int A_p_dest_temp[size];
     memset(A_post, 0, size * sizeof(long));
-    // Random Partition
+    // Random partitions assigned and saved
     randMemParts(A_p_dest, A, A_post);
     memcpy(A_post_2, A_post, sizeof(A_post));
     memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
-    long sA[(size - 1)];
-    memset(sA, 0, (size - 1) * sizeof(long));
-    // Running Random partition through Karmarker Karp
-    long low = karp(A_post, sA, testing);
-    long lowest = low;
+
+    // Run Karp to calculate residue
+    long low = karp3(A_post, size);
+    memcpy(A_post, A_post_2, sizeof(A_post_2));
+    memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
+    // printf("encountered low %lu \n", low);
     long low2 = low;
+    long lowest = low;
+
     for (int i = 0; i < max_iter; i++) {
-        // If we've found a low of 0, stop looking
+        // If we've encountered a low of 0, stop
         if (low != 0) {
-            // Get a random neighbor of solution & run karmarker karp
+            // Check neighbors of lowest partitions
             randNeighborParts(A_p_dest_2, A, A_post_2);
-            memset(sA, 0, (size - 1) * sizeof(long));
-            low2 = karp(A_post_2, sA, testing);
+            memcpy(A_post_temp, A_post_2, sizeof(A_post_2));
+            memcpy(A_p_dest_temp, A_p_dest_2, sizeof(A_p_dest_2));
+            low2 = karp3(A_post_2, size);
             double j = ((double) rand() / (RAND_MAX));
             double tprob = Tprob(i, labs(low), labs(low2));
             // If we've found lower residue or we've rolled a heads from our Tprob function, pursue neighbor
             if (low2 < low || j < tprob){
+                memcpy(A_post, A_post_temp, sizeof(A_post_temp));
+                memcpy(A_post_2, A_post_temp, sizeof(A_post_temp));
+                memcpy(A_p_dest_2, A_p_dest_temp, sizeof(A_p_dest_temp));
+                memcpy(A_p_dest, A_p_dest_temp, sizeof(A_p_dest_temp));
                 low = low2;
-                // copy A_post 2 into A post 1 and A dest 2 into A dest 1
-                memcpy(A_post, A_post_2, sizeof(A_post_2));
-                memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
-                
             } else {
                 low2 = low;
-                // copy A_post 1 into A post 2 and A dest 1 into A dest 2
                 memcpy(A_post_2, A_post, sizeof(A_post));
                 memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
             } 
-            // Record lowest residue we've encountered
             if (low < lowest){
                 lowest = low;
             }
-
         } else {
             break;
         }
     }
-    // printf("%ld\n", lowest);
-    // printf("Sim anneal: (part): %ld\n", lowest);
     return lowest;
 }
 
-long simAnnealPartKarp00(long A[], int max_iter) {
-    bool testing = false;
-    long A_post[size];
-    long A_post_2[size];
-    int A_p_dest[size];
-    int A_p_dest_2[size];
-    memset(A_post, 0, size * sizeof(long));
-    // Random Partition
-    randMemParts(A_p_dest, A, A_post);
-    memcpy(A_post_2, A_post, sizeof(A_post));
-    memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
-    long sA[(size - 1)];
-    memset(sA, 0, (size - 1) * sizeof(long));
-    // Running Random partition through Karmarker Karp
-    
-    long low = karp(A_post, sA, testing);
-    long lowest = low;
-    long low2 = low;
-    for (int i = 0; i < max_iter; i++) {
-        // If we've found a low of 0, stop looking
-        if (low != 0) {
-            // Get a random neighbor of solution & run karmarker karp
-            randNeighborParts(A_p_dest_2, A, A_post_2);
-            memset(sA, 0, (size - 1) * sizeof(long));
-            low2 = karp(A_post_2, sA, testing);
-            double j = ((double) rand() / (RAND_MAX));
-            double tprob = Tprob(i, labs(low), labs(low2));
-            // If we've found lower residue or we've rolled a heads from our Tprob function, pursue neighbor
-            if (low2 < low || j < tprob){
-                low = low2;
-                // copy A_post 2 into A post 1 and A dest 2 into A dest 1
-                memcpy(A_post, A_post_2, sizeof(A_post_2));
-                memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
-                
-            } else {
-                low2 = low;
-                // copy A_post 1 into A post 2 and A dest 1 into A dest 2
-                memcpy(A_post_2, A_post, sizeof(A_post));
-                memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
-            } 
-            // Record lowest residue we've encountered
-            if (low < lowest){
-                lowest = low;
-            }
 
-        } else {
-            break;
-        }
-    }
-    // printf("%ld\n", lowest);
-    // printf("Sim anneal: (part): %ld\n", lowest);
-    return lowest;
-}
+
 /*
 Hill Climber (PARTITIONED):
 Takes in parameters A and max iteration.
@@ -370,33 +316,39 @@ Proceeds to check neighbor's neighbors if neighbor has lower residue.
 Returns the lowest residue it encounters
 */
 long hillClimberPartKarp(long A[], int max_iter) {
-    bool testing = false;
     long A_post[size];
     long A_post_2[size];
+    long A_post_temp[size];
     // Destination array to hold specific partitions
     int A_p_dest[size];
     int A_p_dest_2[size];
+    int A_p_dest_temp[size];
     memset(A_post, 0, size * sizeof(long));
     // Random partitions assigned and saved
     randMemParts(A_p_dest, A, A_post);
-    long sA[(size - 1)];
-    memset(sA, 0, (size - 1) * sizeof(long));
-    // Run Karp to calculate residue
-    long low = karp(A_post, sA, testing);
-    long low2 = low;
     memcpy(A_post_2, A_post, sizeof(A_post));
     memcpy(A_p_dest_2, A_p_dest, sizeof(A_p_dest));
+
+    // Run Karp to calculate residue
+    long low = karp3(A_post, size);
+    memcpy(A_post, A_post_2, sizeof(A_post_2));
+    memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
+    long low2 = low;
+
     for (int i = 0; i < max_iter; i++) {
         // If we've encountered a low of 0, stop
         if (low != 0) {
             // Check neighbors of lowest partitions
             randNeighborParts(A_p_dest_2, A, A_post_2);
-            memset(sA, 0, (size - 1) * sizeof(long));
-            low2 = karp(A_post_2, sA, testing);
+            memcpy(A_post_temp, A_post_2, sizeof(A_post_2));
+            memcpy(A_p_dest_temp, A_p_dest_2, sizeof(A_p_dest_2));
+            low2 = karp3(A_post_2, size);
             // If neighbor is lower, find neighbor's neighbors
             if (low2 < low){
-                memcpy(A_post, A_post_2, sizeof(A_post_2));
-                memcpy(A_p_dest, A_p_dest_2, sizeof(A_p_dest_2));
+                memcpy(A_post, A_post_temp, sizeof(A_post_temp));
+                memcpy(A_post_2, A_post_temp, sizeof(A_post_temp));
+                memcpy(A_p_dest_2, A_p_dest_temp, sizeof(A_p_dest_temp));
+                memcpy(A_p_dest, A_p_dest_temp, sizeof(A_p_dest_temp));
                 low = low2;
             } else {
                 low2 = low;
@@ -407,7 +359,6 @@ long hillClimberPartKarp(long A[], int max_iter) {
             break;
         }
     }
-    // printf("Hill climber: (part): %ld\n", low);
     return low;
 }
 
@@ -434,7 +385,7 @@ void randNeighborParts(int A_p_dest[], long A_pre[], long A_post[]) {
     A_post[j] += A_pre[i];
     // Update partition
     A_p_dest[i] = j;
-
+     
 }
 
 /*
@@ -457,15 +408,11 @@ void randMemParts(int A_p_dest[], long A_pre[], long A_post[]){
     Returns lowest residual found
 */
 long repeatedRandomPartKarp(long A[], int max_iter) {
-    bool testing = false;
     long A_post[size];
     memset(A_post, 0, size * sizeof(long));
     // Creates empty array A_post and puts partitioned A into A_post 
     randSolPart(A, A_post);
-    long sA[(size - 1)];
-    memset(sA, 0, (size - 1) * sizeof(long));
-    // Run Karmarker Karp on partitioned A (A_post)
-    long low = karp(A_post, sA, testing);
+    long low = karp3(A_post, size);
     long low2 = low;
     for (int i = 0; i < max_iter; i++) {
         // If we've found a low of 0, stop
@@ -473,16 +420,13 @@ long repeatedRandomPartKarp(long A[], int max_iter) {
             // Clear partitioned array and find new random partitioning
             memset(A_post, 0, size * sizeof(long));
             randSolPart(A, A_post);
-            memset(sA, 0, (size - 1) * sizeof(long));
-            // Runs Karmarker Karp on partitioned A (A_post)
-            low2 = karp(A_post, sA, testing);
+            low2 = karp3(A_post, size);
             // Save lowest value we've found
             low = min(low, low2);
         } else {
             break;
         }
     }
-    // printf("Repeated Random (part): %ld\n", low);
     return low;
 }
 
@@ -549,7 +493,6 @@ long simAnneal(long A[], int max_iter) {
     }
     //return the lowest residue we've seen
     lowest = labs(lowest);
-    // printf("sim Anneal (unp): %ld\n", lowest);
     return lowest;
 }
 
@@ -685,43 +628,27 @@ long karp(long arr[], long sArr[], bool p) {
 
 }
 
-/*Karmarker Karp
-Takes in sorted array A and empty array for subtraction
-Takes in boolean for print statement
-*/
-long karp2(long arr[], int n) {
+
+    
+long karp3(long arr[], int n){
+    buildHeap(arr, n); 
+    return karp3_h(arr, n);
+    
+}
+
+long karp3_h(long arr[], int n) {
     if (n == 1){
         return arr[0];
     } else if (n == 2){
         return labs(arr[0] - arr[1]);
+    } else {
+        heapify(arr, n, 0);
+        long big = deleteRoot(arr, n);
+        long big2 = arr[0];
+        arr[0] = labs(big - big2);
+        return karp3_h(arr, n - 1);
     }
-    long sArr[(int)(ceil(n/2))];
-    int i = 0;
-    int insert = 0;
-    while (i < n - 1) {
-        sArr[insert] = labs(arr[i] - arr[i + 1]);
-        // printf("%lu - %lu is %lu\n", arr[i], arr[i + 1], sArr[insert]);
-        // printf("i is %d and the difference is %lu and it's placed at index %d\n", i, sArr[insert], insert);
-        insert++;
-        i += 2;
-    }
-
-    if (n % 2 != 0){
-        sArr[insert] = arr[n - 1];
-    } 
-
-    mergeSort(sArr, 0, (int)(ceil(n/2)) - 1);
-    // for (int j = 0; j < (int)(ceil(n/2)); j++) {
-    //     if (j % 10 == 0){
-    //         printf("\n");
-    //     }
-    //     printf("%ld ", sArr[j]);
-    // }
-    // printf("\n \n");
-    return karp2(sArr, (int)(ceil(n/2)));
-}
-    
-   
+} 
 /*
 Sums an entire array, returns solution
 */
@@ -811,3 +738,63 @@ void merge(long arr[], int l, int m, int r) {
         k++; 
     } 
 } 
+
+
+
+// To heapify a subtree rooted with node i which is 
+// an index in arr[]. N is size of heap 
+void heapify(long arr[], int n, int i) 
+{ 
+    int largest = i; // Initialize largest as root 
+    int l = 2 * i + 1; // left = 2*i + 1 
+    int r = 2 * i + 2; // right = 2*i + 2 
+  
+    // If left child is larger than root 
+    if (l < n && arr[l] > arr[largest]) 
+        largest = l; 
+  
+    // If right child is larger than largest so far 
+    if (r < n && arr[r] > arr[largest]) 
+        largest = r; 
+  
+    // If largest is not root 
+    if (largest != i) { 
+
+        long temp = arr[i]; 
+        arr[i] = arr[largest]; 
+        arr[largest] = temp;
+  
+        // Recursively heapify the affected sub-tree 
+        heapify(arr, n, largest); 
+    } 
+} 
+  
+// Function to build a Max-Heap from the given array 
+void buildHeap(long arr[], int n) { 
+    // Index of last non-leaf node 
+    int startIdx = (n / 2) - 1; 
+  
+    // Perform reverse level order traversal 
+    // from last non-leaf node and heapify 
+    // each node 
+    for (int i = startIdx; i >= 0; i--) { 
+        heapify(arr, n, i); 
+    } 
+} 
+
+// Function to delete the root from Heap  
+long deleteRoot(long arr[], int n)  
+{  
+    // Get the last element  
+    long temp = arr[0];
+    long lastElement = arr[n - 1];  
+
+    // Replace root with first element  
+    arr[0] = lastElement;  
+
+    // heapify the root node  
+    heapify(arr, n - 1, 0);  
+
+    // return old root
+    return temp;  
+}  
