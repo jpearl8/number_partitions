@@ -11,7 +11,6 @@ long flip();
 void heapify(long arr[], int n, int i) ;
 long hillClimber(long A[], int max_iter);
 long hillClimberPartKarp(long A[], int max_iter);
-long karp(long arr[], long sArr[], bool p);
 long karp3(long arr[], int n);
 long karp3_h(long arr[], int n);
 void merge(long arr[], int l, int m, int r);
@@ -30,9 +29,7 @@ long simAnnealPartKarp(long A[], int max_iter);
 long sum (long A[]);
 
 int size = 100;
-int sArray = 98;
 int max_iteration_val = 250000;
-int max_iteration_val2 = 250000;
 
 int main(int argc, char** argv) {
     srand(time(NULL));
@@ -202,10 +199,10 @@ int main(int argc, char** argv) {
                 printf("%ld \n", repeatedRandomPartKarp(A, max_iteration_val));
                 break;
             case 12:
-                printf("%ld \n", hillClimberPartKarp(A, max_iteration_val2));
+                printf("%ld \n", hillClimberPartKarp(A, max_iteration_val));
                 break;
             case 13:
-                printf("%ld \n", simAnnealPartKarp(A, max_iteration_val2));
+                printf("%ld \n", simAnnealPartKarp(A, max_iteration_val));
                 break;
 
             // you can have any number of case statements
@@ -575,26 +572,6 @@ long randSol(long A[], bool abs) {
 Takes in sorted array A and empty array for subtraction
 Takes in boolean for print statement
 */
-long karp(long arr[], long sArr[], bool p) {
-    int i = 0;
-    int si = 0;
-    int insert = 0;
-    // inserts difference between A's elements in subtraction array
-    while (i < size) {
-        sArr[insert] = labs(arr[i] - arr[i + 1]);
-        insert++;
-        i += 2;
-    }
-    // inserts difference between subtraction's elements into end of subtraction array
-    while (si < 98) {
-        sArr[insert] = labs(sArr[si] - sArr[si + 1]);
-        insert++;
-        si += 2;
-    }
-
-    return sArr[98];
-}
-
 long karp3(long arr[], int n) {
     buildHeap(arr, n);
     return karp3_h(arr, n);
