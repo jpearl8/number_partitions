@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     int alg = atoi(argv[2]);
     if (flag == 1 || flag == 2){
         //testing mode, rewrite input file
-        for (int ttt = 0; ttt < 2; ttt++){ 
+        for (int ttt = 0; ttt < 10; ttt++){ 
             // rewrite input file
             FILE *fptr;
             fptr = fopen("test.txt", "w");
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
             }
             fclose(input_file);
             // Sort A
-            mergeSort(A, 0, (size - 1));
+            // mergeSort(A, 0, (size - 1));
             // Print A
             // for (int j = 0; j < size; j++) {
             //     printf("%ld ", A[j]);
@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
             }
 
         }
-    } else if (flag == 0){
+    } else if (flag == 0) {
         // read input file    
         FILE *input_file;
         long A[size];
